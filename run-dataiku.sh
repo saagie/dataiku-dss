@@ -8,6 +8,7 @@ echo "Running DSS"
 sleep 30
 
 # Copy JDBC jars and dependencies
+mkdir -p /home/dataiku/dss/lib/jdbc
 cp /home/dataiku/lib/* /home/dataiku/dss/lib/jdbc
 
 # stop DSS
