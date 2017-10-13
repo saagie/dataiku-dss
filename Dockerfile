@@ -7,8 +7,12 @@ USER root
 RUN apt-get update && apt-get install -y wget
 
 RUN wget http://apache.mirrors.tds.net/hadoop/common/hadoop-2.6.5/hadoop-2.6.5.tar.gz && \
-	tar -xzvf hadoop-2.6.5.tar.gz && \
-	mv hadoop-2.6.5 /usr/local/hadoop
+	mkdir -p /etc/hadoop && \
+	tar -xzf hadoop-2.6.5.tar.gz -C /etc/hadoop --strip-components=1
+
+RUN wget https://archive.apache.org/dist/spark/spark-2.1.0/spark-2.1.0-bin-hadoop2.6.tgz && \
+	mkdir -p /opt/spark && \
+	tar -xzf spark-2.1.0-bin-hadoop2.6.tgz -C /opt/spark --strip-components=1
 
 COPY run-dataiku.sh /home/dataiku
 RUN chown dataiku:dataiku /home/dataiku/run-dataiku.sh && \
@@ -26,10 +30,11 @@ RUN wget http://central.maven.org/maven2/org/apache/hive/hive-common/1.1.0/hive-
 
 
 ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre/
-ENV PATH $PATH:/usr/local/hadoop/bin/:/usr/local/hadoop/sbin
+ENV PATH $PATH:/etc/hadoop/bin/:/etc/hadoop/sbin:/opt/spark/bin
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 ENV HIVE_CONF_DIR /etc/hadoop/conf
 ENV HADOOP_HOME /etc/hadoop
-ENV HADOOP_LIB_EXEC /usr/local/hadoop/libexec/
+ENV HADOOP_LIB_EXEC /etc/hadoop/libexec/
+ENV SPARK_HOME /opt/spark
 
-CMD ["/home/dataiku/run-dataiku.sh"]
+ENTRYPOINT ["/home/dataiku/run-dataiku.sh"]
