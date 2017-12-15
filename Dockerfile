@@ -1,4 +1,4 @@
-FROM dataiku/dss:latest
+FROM dataiku/dss:4.0.8
 
 MAINTAINER Cedric DUE <cedric@saagie.com>
 
