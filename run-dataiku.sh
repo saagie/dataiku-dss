@@ -16,6 +16,9 @@ cp /home/dataiku/lib/* /home/dataiku/dss/lib/jdbc
 # stop DSS
 "$DSS_DATADIR"/bin/dss stop
 
+# setting up DSS Hadoop integration
+"$DSS_DATADIR"/bin/dssadmin install-hadoop-integration
+
 # setting up spark
 "$DSS_DATADIR"/bin/dssadmin install-spark-integration -sparkHome /opt/spark
 

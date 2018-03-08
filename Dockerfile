@@ -1,4 +1,4 @@
-FROM dataiku/dss:4.0.8
+FROM dataiku/dss:4.1.5
 
 MAINTAINER Cedric DUE <cedric@saagie.com>
 
@@ -26,10 +26,14 @@ RUN wget http://central.maven.org/maven2/org/apache/hive/hive-common/1.1.0/hive-
   wget http://central.maven.org/maven2/org/apache/hive/hive-service/1.1.0/hive-service-1.1.0.jar -P /home/dataiku/lib/ && \
   wget http://central.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar -P /home/dataiku/lib/ && \
   wget http://central.maven.org/maven2/org/apache/httpcomponents/httpcore/4.4.7/httpcore-4.4.7.jar -P /home/dataiku/lib/ && \
-  wget http://central.maven.org/maven2/org/apache/thrift/libthrift/0.10.0/libthrift-0.10.0.jar -P /home/dataiku/lib/
+  wget http://central.maven.org/maven2/org/apache/thrift/libthrift/0.10.0/libthrift-0.10.0.jar -P /home/dataiku/lib/ && \
+	wget https://downloads.cloudera.com/connectors/Cloudera_ImpalaJDBC_2.5.5.1007.zip -P /home/dataiku/lib/ && \
+	cd /home/dataiku/lib/ && \
+	unzip -j Cloudera_ImpalaJDBC_2.5.5.1007.zip && unzip -j Cloudera_ImpalaJDBC4_2.5.5.1007.zip && \
+	rm -f *.zip
 
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre/
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre/
 ENV PATH $PATH:/etc/hadoop/bin/:/etc/hadoop/sbin:/opt/spark/bin
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
 ENV HIVE_CONF_DIR /etc/hadoop/conf
