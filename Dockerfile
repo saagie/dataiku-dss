@@ -34,8 +34,8 @@ RUN wget http://central.maven.org/maven2/org/apache/hive/hive-common/1.1.0/hive-
 	unzip -j Cloudera_ImpalaJDBC_2.5.5.1007.zip && unzip -j Cloudera_ImpalaJDBC4_2.5.5.1007.zip && \
 	rm -f *.zip
 
-# Remove libthrift-0.9.0 (coming with Cloudera_ImpalaJDBC_2.5.5.1007.zip) as we are providing libthrift-0.9.2
-RUN rm -f /home/dataiku/lib/libthrift-0.9.0.jar
+# Remove libthrift-0.9.0 and TCLIServiceClient.jar (coming with Cloudera_ImpalaJDBC_2.5.5.1007.zip)
+RUN rm -f /home/dataiku/lib/libthrift-0.9.0.jar /home/dataiku/lib/TCLIServiceClient.jar
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre/
 ENV PATH $PATH:/etc/hadoop/bin/:/etc/hadoop/sbin:/opt/spark/bin
