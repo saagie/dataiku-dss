@@ -22,16 +22,20 @@ USER dataiku
 
 RUN mkdir /home/dataiku/lib/
 RUN wget http://central.maven.org/maven2/org/apache/hive/hive-common/1.1.0/hive-common-1.1.0.jar -P /home/dataiku/lib/ && \
-  wget http://central.maven.org/maven2/org/apache/hive/hive-jdbc/1.1.0/hive-jdbc-1.1.0.jar -P /home/dataiku/lib/ && \
   wget http://central.maven.org/maven2/org/apache/hive/hive-service/1.1.0/hive-service-1.1.0.jar -P /home/dataiku/lib/ && \
-  wget http://central.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar -P /home/dataiku/lib/ && \
+	wget http://central.maven.org/maven2/org/apache/hive/hive-jdbc/1.1.0/hive-jdbc-1.1.0.jar -P /home/dataiku/lib/ && \
+	wget http://central.maven.org/maven2/org/apache/spark/spark-hive_2.11/2.1.0/spark-hive_2.11-2.1.0.jar -P /home/dataiku/lib/ && \
+	wget http://central.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.3/httpclient-4.5.3.jar -P /home/dataiku/lib/ && \
   wget http://central.maven.org/maven2/org/apache/httpcomponents/httpcore/4.4.7/httpcore-4.4.7.jar -P /home/dataiku/lib/ && \
-  wget http://central.maven.org/maven2/org/apache/thrift/libthrift/0.10.0/libthrift-0.10.0.jar -P /home/dataiku/lib/ && \
+  wget http://central.maven.org/maven2/org/apache/thrift/libthrift/0.9.2/libthrift-0.9.2.jar -P /home/dataiku/lib/ && \
 	wget https://downloads.cloudera.com/connectors/Cloudera_ImpalaJDBC_2.5.5.1007.zip -P /home/dataiku/lib/ && \
+	wget https://repository.cloudera.com/content/repositories/releases/com/twitter/parquet-hadoop-bundle/1.5.0-cdh5.7.1/parquet-hadoop-bundle-1.5.0-cdh5.7.1.jar -P /home/dataiku/lib/ && \
 	cd /home/dataiku/lib/ && \
 	unzip -j Cloudera_ImpalaJDBC_2.5.5.1007.zip && unzip -j Cloudera_ImpalaJDBC4_2.5.5.1007.zip && \
 	rm -f *.zip
 
+# Remove libthrift-0.9.0 (coming with Cloudera_ImpalaJDBC_2.5.5.1007.zip) as we are providing libthrift-0.9.2
+RUN rm -f /home/dataiku/lib/libthrift-0.9.0.jar
 
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre/
 ENV PATH $PATH:/etc/hadoop/bin/:/etc/hadoop/sbin:/opt/spark/bin
@@ -40,5 +44,7 @@ ENV HIVE_CONF_DIR /etc/hadoop/conf
 ENV HADOOP_HOME /etc/hadoop
 ENV HADOOP_LIB_EXEC /etc/hadoop/libexec/
 ENV SPARK_HOME /opt/spark
+ENV JAVA_LIBRARY_PATH $HADOOP_HOME/lib/native
+ENV LD_LIBRARY_PATH $HADOOP_HOME/lib/native
 
 ENTRYPOINT ["/home/dataiku/run-dataiku.sh"]

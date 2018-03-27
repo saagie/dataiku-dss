@@ -27,6 +27,30 @@ Running **Dataiku Enterprise Edition**:
 docker run -it --rm -p 10000:10000 -v /path_to_hadoop_conf_dir/:/etc/hadoop/conf -v /host_path_to_dss_data/:/home/dataiku/dss --net=host --name dataiku saagie/dataiku-dss:latest
 ```
 
+# Hive connection setup
+
+First, be sure that `hive-site.xml` is mounted in a volume (usually in /etc/hadoop/conf).
+
+Go to DSS Admin / Settings / Hadoop
+
+Enable: Use advanced URL syntax
+Driver class: org.apache.hive.jdbc.HiveDriver
+Connection URL: jdbc:hive2://NAMENODE_IP:10000/default;user=dataiku;password=xxx;auth=plain
+Default execution engine: Hive CLI (Isolated)
+
+# Config with Sentry
+
+- Disable impersonnation for Hive
+- create a dssuser Role
+- Grant:
+```
+GRANT ALL ON DATABASE xxx TO ROLE dssuser
+GRANT ALL ON URI 'hdfs://ROOT_PATH_OF_THE_CONNECTION' TO ROLE dssuser
+```
+
+
+
+
 ## Release note
 
 | Tag            | Release note                              |
