@@ -40,7 +40,7 @@ RUN rm -f /home/dataiku/lib/libthrift-0.9.0.jar
 ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64/jre/
 ENV PATH $PATH:/etc/hadoop/bin/:/etc/hadoop/sbin:/opt/spark/bin
 ENV HADOOP_CONF_DIR /etc/hadoop/conf
-ENV HIVE_CONF_DIR /etc/hadoop/conf
+ENV HIVE_CONF_DIR /etc/hive/conf
 ENV HADOOP_HOME /etc/hadoop
 ENV HADOOP_LIB_EXEC /etc/hadoop/libexec/
 ENV SPARK_HOME /opt/spark

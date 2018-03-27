@@ -16,13 +16,6 @@ cp /home/dataiku/lib/* /home/dataiku/dss/lib/jdbc
 # Stop DSS
 "$DSS_DATADIR"/bin/dss stop
 
-# As hive-site.xml is mounted on /etc/hive/conf on Saagie's cluster,
-# and Dataiku is waiting for it in /etc/hadoop/conf, just copy it...
-if [ -f "/etc/hive/conf/hive-site.xml" ]
-then
-  cp /etc/hive/conf/hive-site.xml /etc/hadoop/conf/hive-site.xml
-fi
-
 # setting up DSS Hadoop integration
 "$DSS_DATADIR"/bin/dssadmin install-hadoop-integration
 
