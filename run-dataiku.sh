@@ -16,6 +16,18 @@ cp /home/dataiku/lib/* /home/dataiku/dss/lib/jdbc
 # Stop DSS
 "$DSS_DATADIR"/bin/dss stop
 
+# If Dataiku is running in Host mode, change its base port
+if [ -z $PORT0 ]
+then
+  export PORT0=$(( $PORT+1 ))
+  echo "No PORT0 variable provided, running Dataiku on default port."
+else
+  echo "Changing Dataiku base port to $PORT0"
+  mv "$DSS_DATADIR"/install.ini "$DSS_DATADIR"/install.ini.bak
+  sed "s/port = .*$/port = $PORT0/g" "$DSS_DATADIR"/install.ini.bak > "$DSS_DATADIR"/install.ini
+  "$DSS_DATADIR"/bin/dssadmin regenerate-config
+fi
+
 # setting up DSS Hadoop integration
 "$DSS_DATADIR"/bin/dssadmin install-hadoop-integration
 
@@ -28,12 +40,12 @@ then
   # overwrite Spark 2.1.0 config
   echo "INFO: ovewriting default spark-env.sh"
   cp /usr/local/spark/conf/spark-env.sh /opt/spark/conf
-  chmod 755 /opt/spark/conf/spark-env.sh
 else
   # use default config
   echo "WARNING: NO CUSTOM spark-env.sh PROVIDED. USING DEFAULT TEMPLATE."
   cp /opt/spark/conf/spark-env.sh.template /opt/spark/conf/spark-env.sh
 fi
+chmod 755 /opt/spark/conf/spark-env.sh
 
 "$DSS_DATADIR"/bin/dssadmin install-spark-integration -sparkHome /opt/spark
 

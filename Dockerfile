@@ -4,7 +4,7 @@ MAINTAINER Cedric DUE <cedric@saagie.com>
 
 USER root
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget gnupg2 lsb-release
 
 RUN wget http://apache.mirrors.tds.net/hadoop/common/hadoop-2.6.5/hadoop-2.6.5.tar.gz && \
 	mkdir -p /etc/hadoop && \
@@ -14,9 +14,20 @@ RUN wget https://archive.apache.org/dist/spark/spark-2.1.0/spark-2.1.0-bin-hadoo
 	mkdir -p /opt/spark && \
 	tar -xzf spark-2.1.0-bin-hadoop2.6.tgz -C /opt/spark --strip-components=1
 
+# Grant acces to /opt/spark to anybody so that dataiku user can override spark-env.sh
+RUN chmod -R 777 /opt/spark
+
 COPY run-dataiku.sh /home/dataiku
 RUN chown dataiku:dataiku /home/dataiku/run-dataiku.sh && \
   chmod 755 /home/dataiku/run-dataiku.sh
+
+# Install Mesos 1.3.1
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF && \
+  DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]') && \
+  CODENAME=$(lsb_release -cs) && \
+  echo "deb http://repos.mesosphere.com/${DISTRO} ${CODENAME} main" | tee /etc/apt/sources.list.d/mesosphere.list && \
+  apt-get -y update && \
+  apt-get install -y --no-install-recommends systemd mesos=1.3.1-2.0.1
 
 USER dataiku
 
@@ -46,5 +57,9 @@ ENV HADOOP_LIB_EXEC /etc/hadoop/libexec/
 ENV SPARK_HOME /opt/spark
 ENV JAVA_LIBRARY_PATH $HADOOP_HOME/lib/native
 ENV LD_LIBRARY_PATH $HADOOP_HOME/lib/native
+ENV MESOS_NATIVE_JAVA_LIBRARY /usr/lib/libmesos-1.3.1.so
+ENV JAVA_VERSION 8.131
+ENV SPARK_VERSION 2.1.0
+ENV APACHE_SPARK_VERSION 2.1.0
 
 ENTRYPOINT ["/home/dataiku/run-dataiku.sh"]

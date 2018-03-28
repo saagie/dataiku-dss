@@ -29,14 +29,14 @@ docker run -it --rm -p 10000:10000 -v /path_to_hadoop_conf_dir/:/etc/hadoop/conf
 
 # Hive connection setup
 
-First, be sure that `hive-site.xml` is mounted in a volume (usually in /etc/hadoop/conf).
+First, be sure that `hive-site.xml` is mounted as a volume in `/etc/hive/conf`.
 
 Go to DSS Admin / Settings / Hadoop
 
 Enable: Use advanced URL syntax
 Driver class: org.apache.hive.jdbc.HiveDriver
 Connection URL: jdbc:hive2://NAMENODE_IP:10000/default;user=dataiku;password=xxx;auth=plain
-Default execution engine: Hive CLI (Isolated)
+Default execution engine: HiveServer2
 
 # Config with Sentry
 
@@ -48,11 +48,18 @@ GRANT ALL ON DATABASE xxx TO ROLE dssuser
 GRANT ALL ON URI 'hdfs://ROOT_PATH_OF_THE_CONNECTION' TO ROLE dssuser
 ```
 
+# Spark configuration
 
+If mounting a volume to your container in order to share your Spark configuration, mount your `spark-env.sh` to `/usr/local/spark/conf/spark-env.sh` or `/opt/spark/conf/spark-env.sh`.
+If you're also mounting `/tmp/spark` to keep track of your Spark executions, make sure this directory has the appropriate permissions on your host machine, so that user `dataiku` will be able to write in it from the container.
 
+**Note that you must start Dataiku in `host` mode if you want it to be able to communicate with your Spark cluster.**
 
-## Release note
+# Changing Dataiku base port
 
-| Tag            | Release note                              |
-| ---------------|:-----------------------------------------:|
-| latest (= 0.1) | Working with Hadoop 2.6.5 and Hive 1.1.0  |
+If you want to customize Dataiku base port (default is 10000), for example when running in host mode (to avoid: `port already in use` error), you can provide a `PORT0` environment variable at runtime.
+
+For example:
+```
+docker run -it --rm --net=host --env PORT0=31000 -v /path_to_hadoop_conf_dir/:/etc/hadoop/conf -v /host_path_to_dss_data/:/home/dataiku/dss --net=host --name dataiku saagie/dataiku-dss:latest
+```
