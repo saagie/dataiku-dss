@@ -29,6 +29,10 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF && \
   apt-get -y update && \
   apt-get install -y --no-install-recommends systemd mesos=1.3.1-2.0.1
 
+# Install DSS dependencies
+RUN echo "APT::Get::Assume-Yes "true";\nAPT::Get::force-yes "true";" > /etc/apt/apt.conf.d/90forceyes
+RUN /home/dataiku/dataiku-dss-4.1.5/scripts/install/install-deps.sh -without-java -without-python -with-r
+
 USER dataiku
 
 RUN mkdir /home/dataiku/lib/
