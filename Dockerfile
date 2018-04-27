@@ -33,6 +33,9 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv E56151BF && \
 RUN echo "APT::Get::Assume-Yes "true";\nAPT::Get::force-yes "true";" > /etc/apt/apt.conf.d/90forceyes
 RUN /home/dataiku/dataiku-dss-4.1.5/scripts/install/install-deps.sh -without-java -without-python -with-r
 
+# Python Env requirements
+RUN apt-get install -y build-essential python-dev
+
 USER dataiku
 
 RUN mkdir /home/dataiku/lib/
